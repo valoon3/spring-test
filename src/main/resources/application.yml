@@ -1,0 +1,81 @@
+spring:
+  application:
+    name: spring-test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  # H2 데이터베이스 설정 (테스트용 인메모리 DB)
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 스키마 자동 생성 및 삭제
+    show-sql: true # SQL 쿼리 로그 출력
+    properties:
+      hibernate:
+        format_sql: true # SQL 로그 포맷팅
+        default_batch_fetch_size: 100
+  h2:
+    console:
+      enabled: true # H2 콘솔 사용
+      path: /h2-console
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace # SQL 파라미터 값 로깅
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  # PostgreSQL 데이터베이스 설정 (로컬 환경)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/testdb # 실제 로컬 DB URL로 변경해주세요.
+    username: nabyungho # 실제 로컬 DB 사용자 이름으로 변경해주세요.
+    password:  # 실제 로컬 DB 비밀번호로 변경해주세요.
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 스키마 자동 생성 및 삭제
+    show-sql: true # SQL 쿼리 로그 출력
+    properties:
+      hibernate:
+        format_sql: true # SQL 로그 포맷팅
+        default_batch_fetch_size: 100
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace # SQL 파라미터 값 로깅
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  # PostgreSQL 데이터베이스 설정 (운영 환경)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME} # 환경 변수 또는 외부 설정 파일 사용 권장
+    username: ${PROD_DB_USER} # 환경 변수 또는 외부 설정 파일 사용 권장
+    password: ${PROD_DB_PASSWORD} # 환경 변수 또는 외부 설정 파일 사용 권장
+  jpa:
+    hibernate:
+      ddl-auto: validate # 스키마 변경 감지 (운영 환경에서는 보통 none 또는 validate 사용)
+    show-sql: false # SQL 쿼리 로그 비활성화 (운영 환경)
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 100
+
+logging:
+  level:
+    org.hibernate.SQL: info # 운영 환경에서는 SQL 로그를 info 레벨 이상으로 설정하는 것이 일반적입니다.

@@ -24,7 +24,6 @@ public class MemberService {
                 nickname(member.getNickname()).
                 name(member.getName()).
                 build();
-
     }
 
 }

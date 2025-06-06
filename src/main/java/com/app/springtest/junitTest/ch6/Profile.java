@@ -28,7 +28,7 @@ public class Profile {
     }
 
     public boolean matches(Criteria criteria) {
-        getCalculateScore(criteria);
+        score = new MatchSet(answers, criteria).getScore();
 
         if(doesNotMatchAnyMustMatchCriterion(criteria)) {
             return false;
@@ -49,16 +49,6 @@ public class Profile {
             }
         }
         return false;
-    }
-
-    private void getCalculateScore(Criteria criteria) {
-        score = 0;
-        for (Criterion criterion : criteria) {
-            Answer answer = answerMatching(criterion);
-            if (criterion.getMatches(answer)) {
-                score += criterion.getWeight().getValue();
-            }
-        }
     }
 
     private boolean anyMatches(Criteria criteria) {

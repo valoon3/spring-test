@@ -33,7 +33,7 @@ public class Profile {
       boolean kill = false;
       boolean anyMatches = false; 
       for (Criterion criterion: criteria) {   
-         Answer answer = answers.get(criterion.getAnswer().getQuestionText());
+         Answer answer = answerMatching(criterion);
          boolean match = criterion.getMatches(answer);
 
          if (!match && criterion.getWeight() == Weight.MustMatch) {  
@@ -53,5 +53,8 @@ public class Profile {
       return score;
    }
 
+   private Answer answerMatching(Criterion criterion) {
+        return answers.get(criterion.getAnswer().getQuestionText());
+   }
 
 }

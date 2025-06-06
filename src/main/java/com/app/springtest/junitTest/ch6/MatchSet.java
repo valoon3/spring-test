@@ -21,7 +21,6 @@ public class MatchSet {
    public MatchSet(Map<String, Answer> answers, Criteria criteria) {
       this.answers = answers;
       this.criteria = criteria;
-      getCalculateScore(criteria);
    }
 
    public boolean getMatches() {
@@ -49,10 +48,13 @@ public class MatchSet {
       return anyMatches;
    }
 
-   private void getCalculateScore(Criteria criteria) {
+   private int getCalculateScore() {
+      int score = 0;
       for (Criterion criterion: criteria)
          if (criterion.getMatches(answerMatching(criterion)))
             score += criterion.getWeight().getValue();
+
+      return score;
    }
 
    private Answer answerMatching(Criterion criterion) {

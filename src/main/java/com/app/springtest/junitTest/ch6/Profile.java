@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Profile {
-    private Map<String, Answer> answers = new HashMap<>();
+    private AnswerCollection answers = new AnswerCollection();
     private String name;
 
     public Profile(String name) {
@@ -25,17 +25,10 @@ public class Profile {
     }
 
     public void add(Answer answer) {
-        answers.put(answer.getQuestionText(), answer);
+        answers.add(answer);
     }
 
     public MatchSet getMatchSet(Criteria criteria) {
         return new MatchSet(answers, criteria);
     }
-
-    public List<Answer> findAnswers(Predicate<Answer> pred) {
-        return answers.values().stream()
-                .filter(pred)
-                .collect(Collectors.toList());
-    }
-
 }

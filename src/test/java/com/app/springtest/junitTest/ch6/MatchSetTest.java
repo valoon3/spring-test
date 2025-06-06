@@ -1,6 +1,7 @@
 package com.app.springtest.junitTest.ch6;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -23,11 +24,11 @@ public class MatchSetTest {
     private Answer answerNoOnsiteDaycare;
 
 
-    private Map<String, Answer> answers;
+    private AnswerCollection answers;
 
     @BeforeEach
     public void init() {
-        answers = new HashMap<>();
+        answers = new AnswerCollection();
         criteria = new Criteria();
 
         questionIsThereRelocation = new BooleanQuestion(1, "Relocation package?");
@@ -62,7 +63,7 @@ public class MatchSetTest {
 
 
     private void add(Answer answer) {
-        answers.put(answer.getQuestionText(), answer);
+        answers.add(answer);
     }
 
     private MatchSet createMatchSet() {

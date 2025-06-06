@@ -30,7 +30,8 @@ class ProfileTest {
                 )
         );
 
-        boolean matches = profile.matches(criteria);
+        boolean matches = profile.getMatchSet(criteria)
+                .getMatches();
 
         assertFalse(matches);
     }
@@ -44,7 +45,7 @@ class ProfileTest {
                 )
         );
 
-        boolean matches = profile.matches(criteria);
+        boolean matches = profile.getMatchSet(criteria).getMatches();
         assertTrue(matches);
     }
 }

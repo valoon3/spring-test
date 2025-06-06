@@ -5,56 +5,72 @@
  * courses, books, articles, and the like. Contact us if you are in doubt.
  * We make no guarantees that this code is fit for any purpose. 
  * Visit http://www.pragmaticprogrammer.com/titles/utj2 for more book information.
-***/
+ ***/
 package com.app.springtest.junitTest.ch6;
 
 import java.util.*;
 
-public class Profile { 
-   private Map<String,Answer> answers = new HashMap<>();
-   private int score;
-   private String name;
+public class Profile {
+    private Map<String, Answer> answers = new HashMap<>();
+    private int score;
+    private String name;
 
-   public Profile(String name) {
-      this.name = name;
-   }
-   
-   public String getName() {
-      return name;
-   }
+    public Profile(String name) {
+        this.name = name;
+    }
 
-   public void add(Answer answer) { 
-      answers.put(answer.getQuestionText(), answer);
-   }
-   
-   public boolean matches(Criteria criteria) { 
-      score = 0;
-      
-      boolean kill = false;
-      boolean anyMatches = false; 
-      for (Criterion criterion: criteria) {   
-         Answer answer = answerMatching(criterion);
-         boolean match = criterion.getMatches(answer);
+    public String getName() {
+        return name;
+    }
 
-         if (!match && criterion.getWeight() == Weight.MustMatch) {  
-            kill = true;
-         }
-         if (match) {         
-            score += criterion.getWeight().getValue();
-         }
-         anyMatches |= match;  
-      }
-      if (kill)       
-         return false;
-      return anyMatches; 
-   }
+    public void add(Answer answer) {
+        answers.put(answer.getQuestionText(), answer);
+    }
 
-   public int score() {
-      return score;
-   }
+    public boolean matches(Criteria criteria) {
+        getCalculateScore(criteria);
 
-   private Answer answerMatching(Criterion criterion) {
+        if(doesNotMatchAnyMustMatchCriterion(criteria)) {
+            return false;
+        }
+
+        return anyMatches(criteria);
+    }
+
+    public int score() {
+        return score;
+    }
+
+    private boolean doesNotMatchAnyMustMatchCriterion(Criteria criteria) {
+        for (Criterion criterion : criteria) {
+            boolean match = criterion.getMatches(answerMatching(criterion));
+            if (!match && criterion.getWeight() == Weight.MustMatch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void getCalculateScore(Criteria criteria) {
+        score = 0;
+        for (Criterion criterion : criteria) {
+            Answer answer = answerMatching(criterion);
+            if (criterion.getMatches(answer)) {
+                score += criterion.getWeight().getValue();
+            }
+        }
+    }
+
+    private boolean anyMatches(Criteria criteria) {
+        boolean anyMatches = false;
+        for (Criterion criterion : criteria) {
+            anyMatches |= criterion.getMatches(answerMatching(criterion));
+        }
+        return anyMatches;
+    }
+
+    private Answer answerMatching(Criterion criterion) {
         return answers.get(criterion.getAnswer().getQuestionText());
-   }
+    }
 
 }

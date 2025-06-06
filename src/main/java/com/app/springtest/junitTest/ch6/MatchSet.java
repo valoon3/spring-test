@@ -8,28 +8,54 @@
 ***/
 package com.app.springtest.junitTest.ch6;
 
+import lombok.Getter;
+
 import java.util.*;
 
+@Getter
 public class MatchSet {
    private Map<String, Answer> answers;
    private int score = 0;
+   private Criteria criteria;
 
    public MatchSet(Map<String, Answer> answers, Criteria criteria) {
       this.answers = answers;
+      this.criteria = criteria;
       getCalculateScore(criteria);
    }
 
+   public boolean getMatches(Criteria criteria) {
+      if (doesNotMatchAnyMustMatchCriterion(criteria)) {
+         return false;
+      }
+      return anyMatches(criteria);
+   }
+
+   private boolean doesNotMatchAnyMustMatchCriterion(Criteria criteria) {
+      for (Criterion criterion : criteria) {
+         boolean match = criterion.getMatches(answerMatching(criterion));
+         if (!match && criterion.getWeight() == Weight.MustMatch) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   private boolean anyMatches(Criteria criteria) {
+      boolean anyMatches = false;
+      for (Criterion criterion : criteria) {
+         anyMatches |= criterion.getMatches(answerMatching(criterion));
+      }
+      return anyMatches;
+   }
+
    private void getCalculateScore(Criteria criteria) {
-      for (Criterion criterion: criteria) 
+      for (Criterion criterion: criteria)
          if (criterion.getMatches(answerMatching(criterion)))
             score += criterion.getWeight().getValue();
    }
 
    private Answer answerMatching(Criterion criterion) {
       return answers.get(criterion.getAnswer().getQuestionText());
-   }
-
-   public int getScore() {
-      return score;
    }
 }

@@ -28,39 +28,14 @@ public class Profile {
     }
 
     public boolean matches(Criteria criteria) {
-        score = new MatchSet(answers, criteria).getScore();
-
-        if(doesNotMatchAnyMustMatchCriterion(criteria)) {
-            return false;
-        }
-
-        return anyMatches(criteria);
+        MatchSet matchSet = new MatchSet(answers, criteria);
+        score = matchSet.getScore();
+        return matchSet.getMatches(criteria);
     }
 
     public int score() {
         return score;
     }
 
-    private boolean doesNotMatchAnyMustMatchCriterion(Criteria criteria) {
-        for (Criterion criterion : criteria) {
-            boolean match = criterion.getMatches(answerMatching(criterion));
-            if (!match && criterion.getWeight() == Weight.MustMatch) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean anyMatches(Criteria criteria) {
-        boolean anyMatches = false;
-        for (Criterion criterion : criteria) {
-            anyMatches |= criterion.getMatches(answerMatching(criterion));
-        }
-        return anyMatches;
-    }
-
-    private Answer answerMatching(Criterion criterion) {
-        return answers.get(criterion.getAnswer().getQuestionText());
-    }
 
 }

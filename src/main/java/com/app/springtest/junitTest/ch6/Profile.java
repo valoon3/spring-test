@@ -9,10 +9,11 @@
 package com.app.springtest.junitTest.ch6;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Profile {
     private Map<String, Answer> answers = new HashMap<>();
-    private int score;
     private String name;
 
     public Profile(String name) {
@@ -27,15 +28,14 @@ public class Profile {
         answers.put(answer.getQuestionText(), answer);
     }
 
-    public boolean matches(Criteria criteria) {
-        MatchSet matchSet = new MatchSet(answers, criteria);
-        score = matchSet.getScore();
-        return matchSet.getMatches(criteria);
+    public MatchSet getMatchSet(Criteria criteria) {
+        return new MatchSet(answers, criteria);
     }
 
-    public int score() {
-        return score;
+    public List<Answer> findAnswers(Predicate<Answer> pred) {
+        return answers.values().stream()
+                .filter(pred)
+                .collect(Collectors.toList());
     }
-
 
 }

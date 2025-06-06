@@ -24,14 +24,14 @@ public class MatchSet {
       getCalculateScore(criteria);
    }
 
-   public boolean getMatches(Criteria criteria) {
-      if (doesNotMatchAnyMustMatchCriterion(criteria)) {
+   public boolean getMatches() {
+      if (doesNotMatchAnyMustMatchCriterion()) {
          return false;
       }
-      return anyMatches(criteria);
+      return anyMatches();
    }
 
-   private boolean doesNotMatchAnyMustMatchCriterion(Criteria criteria) {
+   private boolean doesNotMatchAnyMustMatchCriterion() {
       for (Criterion criterion : criteria) {
          boolean match = criterion.getMatches(answerMatching(criterion));
          if (!match && criterion.getWeight() == Weight.MustMatch) {
@@ -41,7 +41,7 @@ public class MatchSet {
       return false;
    }
 
-   private boolean anyMatches(Criteria criteria) {
+   private boolean anyMatches() {
       boolean anyMatches = false;
       for (Criterion criterion : criteria) {
          anyMatches |= criterion.getMatches(answerMatching(criterion));

@@ -72,8 +72,8 @@ class EventControllerTest {
                             .content(objectMapper.writeValueAsString(request))
                     );
                 } catch (Exception e) {
-                    // 예외가 발생하더라도 latch 는 줄여줘야 합니다.
-                    System.out.println(e.getMessage());
+                    // 예외가 발생하면 테스트를 실패로 처리합니다.
+                    fail("API 호출 중 예외 발생: " + e.getMessage());
                 } finally {
                     latch.countDown();
                 }

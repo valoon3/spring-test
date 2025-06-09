@@ -2,7 +2,9 @@ package com.app.springtest.event.controller;
 
 import com.app.springtest.event.constant.EventType;
 import com.app.springtest.event.dto.IssueEventRequestDto;
+import com.app.springtest.event.entity.Event;
 import com.app.springtest.event.repository.EventRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,12 +50,12 @@ class EventControllerTest {
 
 
     @Test
-    @DisplayName("쿠폰 발급 요청이 동시에 들어와도 한 번만 성공해야 한다.")
+    @DisplayName("이벤트 요청이 동시에 들어와도 한 번만 성공해야 한다.")
     public void 같은_이벤트를_여러번_참석할_경우_한번만_지원_성공() throws InterruptedException {
         // Arrange (준비)
         final int numberOfThreads = 100;
         final long userId = 1L;
-        final EventType eventType = EventType.EVENT_10_PERCENT;
+        final EventType eventType = EventType.DISCOUNT_1000_WON;
 
         // 동시 실행을 위한 ExecutorService 와 스레드 수를 설정합니다.
         final ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -86,6 +89,38 @@ class EventControllerTest {
         // Assert (단언)
         long issuedCouponCount = eventRepository.count();
         assertThat(issuedCouponCount).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("이벤트가 사용된 이후에는 동일한 이벤트에 지원할 수 있다.")
+    public void 이벤트가_사용된_이후에는_동일한_이벤트에_지원할_수_있다() throws Exception {
+        // Arrange (준비)
+        final long userId = 1L;
+        final EventType eventType = EventType.DISCOUNT_10_PERCENT;
+
+        IssueEventRequestDto request = new IssueEventRequestDto(eventType);
+
+        // Act (실행)
+        mockMvc.perform(post("/api/v1/event/users/" + userId + "/issue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        );
+
+        // 발급된 이벤트 삭제
+        Event submittedEvent = eventRepository.findByUserIdAndType(userId, eventType).get();
+        eventRepository.delete(submittedEvent);
+
+        assertDoesNotThrow(() -> {
+            mockMvc.perform(post("/api/v1/event/users/" + userId + "/issue")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+            );
+        });
+
+
+        // Assert (단언)
+        long totalCouponCount = eventRepository.count();
+        assertThat(totalCouponCount).isEqualTo(1);
     }
 
 }

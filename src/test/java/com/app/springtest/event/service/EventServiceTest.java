@@ -37,8 +37,8 @@ class EventServiceTest {
     @Test
     public void 하나의_이벤트에_중복참여할경우_한번만_성공해야한다() {
         // Arrange (준비)
-        Event firstEvent = Event.create(1l, EventType.EVENT_10_PERCENT);
-        Event secondEvent = Event.create(1l, EventType.EVENT_10_PERCENT);
+        Event firstEvent = Event.create(1l, EventType.DISCOUNT_10_PERCENT);
+        Event secondEvent = Event.create(1l, EventType.DISCOUNT_10_PERCENT);
 
         // Act (실행)
 

@@ -5,6 +5,7 @@ import com.app.springtest.event.entity.Event;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -12,6 +13,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     public Optional<Event> findById(Long id);
 
     public Optional<Event> findByUserIdAndType(Long userId, EventType eventType);
+
+    public List<Event> findAllByUserId(Long userId);
 
 
 }

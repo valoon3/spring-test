@@ -30,7 +30,7 @@ public enum EventType {
      * @param originalPrice 원가
      * @return 할인 적용된 금액
      */
-    public int calculateDiscount(int originalPrice) {
+    public int calculateDiscount(long originalPrice) {
         if (originalPrice < this.minPurchaseAmount) {
             return -1; // 최소 결제 금액 미달 시 -1 반환
         }

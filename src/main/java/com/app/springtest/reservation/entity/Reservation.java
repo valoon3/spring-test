@@ -29,4 +29,12 @@ public class Reservation {
     @Embedded
     private TimeSlice time;
 
+    public static Reservation create(long userId, long roomId, TimeSlice time) {
+        Reservation reservation = new Reservation();
+        reservation.userId = userId;
+        reservation.roomId = roomId;
+        reservation.time = time;
+        return reservation;
+    }
+
 }

@@ -87,4 +87,35 @@ class TimeSliceTest {
         }
     }
 
+    @Nested
+    class OverlapTests {
+        @Test
+        @DisplayName("시간이 겹치지 않는 경우 false를 반환한다")
+        void 시간_겹치지_않는_경우_false를_반환한다() {
+            // Given (주어진 상황)
+            TimeSlice timeSlice1 = TimeSlice.create(LocalTime.of(8, 0), LocalTime.of(10, 0));
+            TimeSlice timeSlice2 = TimeSlice.create(LocalTime.of(10, 30), LocalTime.of(12, 0));
+
+            // When (무엇을 할 때)
+            boolean result = timeSlice1.overlaps(timeSlice2);
+
+            // Then (결과)
+            assertFalse(result);
+        }
+
+        @Test
+        @DisplayName("시간이 겹치는 경우 true를 반환한다")
+        void 시간_겹치는_경우_true를_반환한다() {
+            // Given (주어진 상황)
+            TimeSlice timeSlice1 = TimeSlice.create(LocalTime.of(8, 0), LocalTime.of(10, 0));
+            TimeSlice timeSlice2 = TimeSlice.create(LocalTime.of(9, 30), LocalTime.of(11, 0));
+
+            // When (무엇을 할 때)
+            boolean result = timeSlice1.overlaps(timeSlice2);
+
+            // Then (결과)
+            assertTrue(result);
+        }
+    }
+
 }

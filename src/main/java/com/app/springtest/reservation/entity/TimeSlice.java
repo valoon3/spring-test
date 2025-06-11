@@ -25,6 +25,10 @@ public class TimeSlice {
         return new TimeSlice(start, end);
     }
 
+    public boolean overlaps(TimeSlice other) {
+        return !(this.end.isBefore(other.start) || this.start.isAfter(other.end));
+    }
+
     private static void validateTimeSlice(LocalTime start, LocalTime end) {
         validateReservationTimeUnit(start, end);
         validateServiceHours(start, end);

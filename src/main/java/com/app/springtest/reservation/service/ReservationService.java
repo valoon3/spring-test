@@ -37,6 +37,17 @@ public class ReservationService {
     }
 
     public List<ReservationResponseDto> getUserReservations(long userId) {
-        return null;
+
+        List<Reservation> reservations = roomReservationRepository.findAllByUserId(userId);
+
+        return reservations.stream()
+                .map(reservation -> new ReservationResponseDto(
+                        reservation.getId(),
+                        reservation.getUserId(),
+                        reservation.getRoomId(),
+                        reservation.getTime().getStart().format(DateTimeFormatter.ofPattern("HH:mm")),
+                        reservation.getTime().getEnd().format(DateTimeFormatter.ofPattern("HH:mm"))
+                ))
+                .toList();
     }
 }

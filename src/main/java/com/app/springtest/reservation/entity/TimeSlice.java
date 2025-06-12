@@ -1,5 +1,6 @@
 package com.app.springtest.reservation.entity;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +9,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Getter
 public class TimeSlice {
+    @Column(name = "start_time", nullable = false)
     private LocalTime start;
+
+    @Column(name = "end_time", nullable = false)
     private LocalTime end;
 
     private static final LocalTime LUNCH_START = LocalTime.of(12, 0);

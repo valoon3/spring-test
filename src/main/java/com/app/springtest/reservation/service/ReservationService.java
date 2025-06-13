@@ -45,8 +45,8 @@ public class ReservationService {
                         reservation.getId(),
                         reservation.getUserId(),
                         reservation.getRoomId(),
-                        reservation.getTime().getStart().format(DateTimeFormatter.ofPattern("HH:mm")),
-                        reservation.getTime().getEnd().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        reservation.getTime().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")),
+                        reservation.getTime().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
                 ))
                 .toList();
     }

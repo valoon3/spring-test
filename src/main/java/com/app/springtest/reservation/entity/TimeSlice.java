@@ -1,19 +1,17 @@
 package com.app.springtest.reservation.entity;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class TimeSlice {
-    @Column(name = "start_time", nullable = false)
-    private LocalTime start;
-
-    @Column(name = "end_time", nullable = false)
-    private LocalTime end;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     private static final LocalTime LUNCH_START = LocalTime.of(12, 0);
     private static final LocalTime LUNCH_END = LocalTime.of(13, 0);
@@ -30,7 +28,7 @@ public class TimeSlice {
     }
 
     public boolean overlaps(TimeSlice other) {
-        return !(this.end.isBefore(other.start) || this.start.isAfter(other.end));
+        return !(this.endTime.isBefore(other.startTime) || this.startTime.isAfter(other.endTime));
     }
 
     private static void validateTimeSlice(LocalTime start, LocalTime end) {

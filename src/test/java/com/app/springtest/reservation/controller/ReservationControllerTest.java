@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +45,22 @@ class ReservationControllerTest {
         void 점심시간에_예약할_경우_500에러가_발생한다() throws Exception {
 
             ReservationRequestDto requestDto = new ReservationRequestDto(1L, 1L, "11:30", "12:30");
+            String requestBody = objectMapper.writeValueAsString(requestDto);
+
+            // When & Then
+            ResultActions resultActions = mockMvc.perform(post(URL)
+                            .contentType("application/json")
+                            .content(requestBody)
+            );
+
+            resultActions.andExpect(status().isInternalServerError());
+        }
+
+        @Test
+        @DisplayName("예약 시작시간과 종료시간이 같을 경우 500 에러가 발생한다.")
+        void 예약_시작시간과_종료시간이_같을_경우_500에러가_발생한다() throws Exception {
+
+            ReservationRequestDto requestDto = new ReservationRequestDto(1L, 1L, "10:00", "10:00");
             String requestBody = objectMapper.writeValueAsString(requestDto);
 
             // When & Then
@@ -102,10 +119,47 @@ class ReservationControllerTest {
 
             resultActions.andExpect(status().isOk());
         }
+
+        @Test
+        @DisplayName("겹치는 예약은 할 수 없습니다.")
+        void 겹치는_예약은_할_수_없습니다() throws Exception {
+
+            ReservationRequestDto requestDto1 = new ReservationRequestDto(1L, 1L, "10:00", "11:30");
+            String requestBody1 = objectMapper.writeValueAsString(requestDto1);
+            mockMvc.perform(post(URL)
+                    .contentType("application/json")
+                    .content(requestBody1))
+                    .andExpect(status().isOk());
+
+            ReservationRequestDto requestDto2 = new ReservationRequestDto(1L, 1L, "11:00", "11:30");
+            String requestBody2 = objectMapper.writeValueAsString(requestDto2);
+
+            // When & Then
+            ResultActions resultActions = mockMvc.perform(post(URL)
+                            .contentType("application/json")
+                            .content(requestBody2)
+            );
+
+            resultActions.andExpect(status().isInternalServerError());
+        }
     }
 
     @Nested
     class GetUserReservationsTests {
+        @Test
+        @DisplayName("사용자의 예약 목록을 조회할 수 있다.")
+        void 사용자의_예약_목록을_조회할_수_있다() throws Exception {
+            // Given
+            long userId = 1L; // 예시 사용자 ID
 
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                    get("/api/v1/reservations/users/" + userId)
+                            .contentType("application/json")
+            );
+
+            // Then
+            resultActions.andExpect(status().isOk());
+        }
     }
 }

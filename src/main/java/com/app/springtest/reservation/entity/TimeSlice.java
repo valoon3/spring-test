@@ -70,5 +70,9 @@ public class TimeSlice {
         if (start.getMinute() % 30 != 0 || end.getMinute() % 30 != 0) {
             throw new IllegalArgumentException("Reservation time must be in 30-minute intervals");
         }
+
+        if (start.equals(end) || end.isBefore(start.plusMinutes(30))) {
+            throw new IllegalArgumentException("Reservation start time and end time must be at least 30 minutes apart");
+        }
     }
 }

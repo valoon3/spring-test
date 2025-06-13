@@ -30,12 +30,6 @@ class ReservationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @BeforeEach
-//    void setUp() {
-//        mockMvc = MockMvcBuilders.standaloneSetup(ReservationController).build();
-//    }
-
-
     @Nested
     class CreateReservationTests {
         private final String URL = "/api/v1/reservations";
@@ -160,6 +154,48 @@ class ReservationControllerTest {
 
             // Then
             resultActions.andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("예약한 회의실이 조회된다")
+        void 예약한_회의실이_조회된다() throws Exception {
+            // Given
+            long userId = 1L; // 예시 사용자 ID
+
+            // 예약 생성
+            ReservationRequestDto requestDto1 = new ReservationRequestDto(userId, 1L, "10:00", "10:30");
+            String requestBody1 = objectMapper.writeValueAsString(requestDto1);
+            mockMvc.perform(
+                    post("/api/v1/reservations")
+                            .contentType("application/json")
+                            .content(requestBody1)
+            ).andExpect(status().isOk());
+
+            ReservationRequestDto requestDto2 = new ReservationRequestDto(userId, 1L, "14:00", "15:30");
+            String requestBody2 = objectMapper.writeValueAsString(requestDto2);
+            mockMvc.perform(
+                    post("/api/v1/reservations")
+                            .contentType("application/json")
+                            .content(requestBody2)
+            ).andExpect(status().isOk());
+
+            // When
+            ResultActions resultActions = mockMvc.perform(
+                    get("/api/v1/reservations/users/" + userId)
+                            .contentType("application/json")
+            );
+
+            // Then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(result -> {
+                        String responseBody = result.getResponse().getContentAsString();
+
+                        assertTrue(responseBody.contains("10:00"));
+                        assertTrue(responseBody.contains("10:30"));
+                        assertTrue(responseBody.contains("14:00"));
+                        assertTrue(responseBody.contains("15:30"));
+                    });
         }
     }
 }

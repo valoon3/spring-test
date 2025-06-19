@@ -13,8 +13,9 @@ public class StockService {
     private final StockRepository stockRepository;
 
     @Transactional
-    public  void decrease(final Long id, final Long quantity) {
-        Stock stock = stockRepository.findById(id).orElseThrow(() -> new RuntimeException("Stock not found with id: " + id));
+    public void decrease(final Long id, final int quantity) {
+        Stock stock = stockRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Stock not found with id: " + id));
         stock.decrease(quantity);
     }
 

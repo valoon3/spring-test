@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-        name = "products",
+        name = "stock",
         indexes = {
 
         }
@@ -24,19 +24,24 @@ public class Stock {
     private long productId;
 
     @Column(nullable = false)
-    private long quantity;
+    private int quantity;
 
-    public Stock create(long productId, long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-        return this;
+    public static Stock create(long productId, int quantity) {
+        Stock stock = new Stock();
+        stock.productId = productId;
+        stock.quantity = quantity;
+        return stock;
     }
 
     public void updatePlusQuantity(long quantity) {
         this.quantity += quantity;
     }
 
-    public void decrease(long quantity) {
+    public void decrease(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Invalid quantity: " + quantity);
+        }
+
         if (this.quantity < quantity) {
             throw new IllegalArgumentException("Insufficient stock quantity");
         }
